@@ -134,6 +134,20 @@ main() {
     local project_source="$HOME/Desktop/Work/Project/QQLive"
     local source_dir="$project_source/app/build/outputs/apk/debug/"
     local target_dir="$HOME/Desktop/Develop/归档构建产物"
+    local remark=""
+
+    # 解析命令行参数
+    while getopts "m:" opt; do
+        case $opt in
+            m)
+                remark="$OPTARG"
+                ;;
+            *)
+                echo "用法: $0 [-m 备注]"
+                exit 1
+                ;;
+        esac
+    done
 
     local branch_name=$(get_git_branch "$project_source")
     if [ -z "$branch_name" ]; then
@@ -154,7 +168,7 @@ main() {
     # 执行after备份
     local after_postfix="post"
     create_backup_dir "$source_dir" "$target_dir" "$branch_name" "$timestamp" "$after_postfix"
-    backup_build_artifact "$source_dir" "$target_dir/debug_${branch_name}_${timestamp}_${after_postfix}"
+    backup_build_artifact "$source_dir" "$target_dir/debug_${branch_name}_${timestamp}_${after_postfix}_${remark}"
 
     # 结束时间
     end_time=$(date +%s)
